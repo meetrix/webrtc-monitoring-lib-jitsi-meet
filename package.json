@@ -33,7 +33,10 @@
     "strophejs-plugin-disco": "0.0.2",
     "strophejs-plugin-stream-management": "https://git@github.com/jitsi/strophejs-plugin-stream-management#001cf02bef2357234e1ac5d163611b4d60bf2b6a",
     "uuid": "8.1.0",
-    "webrtc-adapter": "8.1.1"
+    "webrtc-adapter": "8.1.1",
+    "@peermetrics/webrtc-stats": "git+https://github.com/buddhikajay/webrtc-stats.git",
+    "@meetrix/lib-monitoring": "^0.1.16-4d09d4ce.0",
+    "@meetrix/webrtc-monitoring-common-lib": "latest"
   },
   "devDependencies": {
     "@babel/core": "7.16.0",
