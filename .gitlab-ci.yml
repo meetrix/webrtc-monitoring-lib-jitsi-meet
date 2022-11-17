@@ -35,4 +35,4 @@ branch_publish:
   rules:
     - if: $CI_COMMIT_BRANCH
   script:
-    - aws s3 cp lib-jitsi-meet.tar.gz s3://$DEV_S3_BUCKET_NAME/$PRODUCT_NAME/$STAGING_ZIP_NAME
+    - aws s3 cp lib-jitsi-meet.tar.gz s3://$DEV_S3_BUCKET_NAME/zip/lib-jitsi-meet.tar.gz
