@@ -21,7 +21,7 @@ branch_build:
     - echo "Created the following .npmrc:"; cat .npmrc
     # Build, using the cache if available
     - npm install
-    #- CI=false npm run build
+    - CI=false npm run build
     - rm -r node_modules
     - cd .. && tar -zcvf lib-jitsi-meet.tar.gz dist connection_optimization modules types package.json
   artifacts:
