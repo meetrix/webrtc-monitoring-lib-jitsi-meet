@@ -23,7 +23,7 @@ branch_build:
     - npm install
     - CI=false npm run build
     - rm -r node_modules
-    - cd .. && tar -zcvf lib-jitsi-meet.tar.gz dist connection_optimization modules types package.json
+    - tar -zcvf lib-jitsi-meet.tar.gz dist connection_optimization modules types package.json
   artifacts:
     paths:
       - lib-jitsi-meet.tar.gz
