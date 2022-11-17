@@ -22,8 +22,8 @@ branch_build:
     # Build, using the cache if available
     - npm install
     - CI=false npm run build
-    - rm -r node_modules
-    - tar -zcvf lib-jitsi-meet.tar.gz dist connection_optimization modules types package.json
+    - mkdir package && mv dist connection_optimization modules types package.json -t package
+    - tar -zcvf lib-jitsi-meet.tar.gz package
   artifacts:
     paths:
       - lib-jitsi-meet.tar.gz
