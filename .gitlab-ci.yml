@@ -1,0 +1,38 @@
+branch_build:
+  image: node:16
+  stage: build
+  environment:
+    name: staging
+  rules: # on master automatically, or on branch manually
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: on_success
+    - if: $CI_COMMIT_BRANCH
+      when: manual
+  script:
+    # If no .npmrc is included in the repo, generate a temporary one that is configured to install from GitLab's NPM registry
+    - |
+      if [[ ! -f .npmrc ]]; then
+        echo 'No .npmrc found! Creating one now. Please review the following link for more information: https://docs.gitlab.com/ee/user/packages/npm_registry/index.html#project-level-npm-endpoint-1'
+        {
+          echo "@${CI_PROJECT_ROOT_NAMESPACE}:registry=${CI_API_V4_URL}/packages/npm/"
+          echo "${CI_API_V4_URL#http*:}/packages/npm/:_authToken=\${CI_JOB_TOKEN}"
+        } >> .npmrc
+      fi
+    - echo "Created the following .npmrc:"; cat .npmrc
+    # Build, using the cache if available
+    - CI=false npm ci --cache .npm --prefer-offline
+    - npm run build
+    - cd .. && tar -zcvf lib-jitsi-meet.tar.gz .
+  artifacts:
+    paths:
+      - lib-jitsi-meet.tar.gz
+
+branch_publish:
+  image: meetrix/website-build-container
+  environment:
+    name: staging
+  stage: deploy
+  rules:
+    - if: $CI_COMMIT_BRANCH
+  script:
+    - aws s3 cp lib-jitsi-meet.tar.gz s3://$DEV_S3_BUCKET_NAME/$PRODUCT_NAME/$STAGING_ZIP_NAME
