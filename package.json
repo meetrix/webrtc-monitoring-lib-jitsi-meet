@@ -35,7 +35,7 @@
     "uuid": "8.1.0",
     "webrtc-adapter": "8.1.1",
     "@peermetrics/webrtc-stats": "git+https://github.com/buddhikajay/webrtc-stats.git",
-    "@meetrix/lib-monitoring": "^0.1.16-4d09d4ce.0",
+    "@meetrix/lib-monitoring": "^0.1.17-ed7e2322.0",
     "@meetrix/webrtc-monitoring-common-lib": "latest"
   },
   "devDependencies": {
