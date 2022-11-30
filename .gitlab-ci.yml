@@ -1,3 +1,6 @@
+variables:
+  STAGING_ZIP_NAME: lib-jitsi-meet-$CI_PIPELINE_ID.tar.gz
+
 branch_build:
   image: node:16
   stage: build
@@ -36,4 +39,4 @@ branch_publish:
   rules:
     - if: $CI_COMMIT_BRANCH
   script:
-    - aws s3 cp lib-jitsi-meet.tar.gz s3://$DEV_S3_BUCKET_NAME/zip/lib-jitsi-meet.tar.gz --acl public-read
+    - aws s3 cp lib-jitsi-meet.tar.gz s3://$DEV_S3_BUCKET_NAME/zip/$STAGING_ZIP_NAME --acl public-read
