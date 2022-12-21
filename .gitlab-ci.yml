@@ -1,5 +1,5 @@
 variables:
-  STAGING_ZIP_NAME: lib-jitsi-meet-$CI_PIPELINE_ID.tar.gz
+  ZIP_NAME: lib-jitsi-meet-$CI_PIPELINE_ID.tar.gz
 
 branch_build:
   image: node:16
@@ -24,6 +24,7 @@ branch_build:
     - echo "Created the following .npmrc:"; cat .npmrc
     # Build, using the cache if available
     - npm install
+    - npm install @meetrix/lib-monitoring@$LIBMONITORING_VERSION
     - CI=false npm run build
     - mkdir package && mv dist connection_optimization modules types package.json -t package
     - tar -zcvf lib-jitsi-meet.tar.gz package
@@ -33,10 +34,48 @@ branch_build:
 
 branch_publish:
   image: meetrix/website-build-container
+  stage: deploy
   environment:
     name: staging
-  stage: deploy
   rules:
     - if: $CI_COMMIT_BRANCH
   script:
-    - aws s3 cp lib-jitsi-meet.tar.gz s3://$DEV_S3_BUCKET_NAME/zip/$STAGING_ZIP_NAME --acl public-read
+    - aws s3 cp lib-jitsi-meet.tar.gz s3://$DEV_S3_BUCKET_NAME/staging/zip/$ZIP_NAME --acl public-read
+
+production_build:
+  image: node:16
+  stage: build
+  environment:
+    name: production
+  rules:
+    - if: $CI_COMMIT_REF_NAME =~ /^v\d+\.\d+\.\d+.*$/
+  script:
+    # If no .npmrc is included in the repo, generate a temporary one that is configured to install from GitLab's NPM registry
+    - |
+      if [[ ! -f .npmrc ]]; then
+        echo 'No .npmrc found! Creating one now. Please review the following link for more information: https://docs.gitlab.com/ee/user/packages/npm_registry/index.html#project-level-npm-endpoint-1'
+        {
+          echo "@${CI_PROJECT_ROOT_NAMESPACE}:registry=${CI_API_V4_URL}/packages/npm/"
+          echo "${CI_API_V4_URL#http*:}/packages/npm/:_authToken=\${CI_JOB_TOKEN}"
+        } >> .npmrc
+      fi
+    - echo "Created the following .npmrc:"; cat .npmrc
+    # Build, using the cache if available
+    - npm install
+    - npm install @meetrix/lib-monitoring@$LIBMONITORING_VERSION
+    - CI=false npm run build
+    - mkdir package && mv dist connection_optimization modules types package.json -t package
+    - tar -zcvf lib-jitsi-meet.tar.gz package
+  artifacts:
+    paths:
+      - lib-jitsi-meet.tar.gz
+
+production_publish:
+  image: meetrix/website-build-container
+  stage: deploy
+  environment:
+    name: production
+  rules:
+    - if: $CI_COMMIT_REF_NAME =~ /^v\d+\.\d+\.\d+.*$/
+  script:
+    - aws s3 cp lib-jitsi-meet.tar.gz s3://$DEV_S3_BUCKET_NAME/production/zip/$ZIP_NAME --acl public-read
