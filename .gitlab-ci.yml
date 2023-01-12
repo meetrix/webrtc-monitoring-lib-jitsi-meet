@@ -51,18 +51,18 @@ production_build:
     - if: $CI_COMMIT_REF_NAME =~ /^v\d+\.\d+\.\d+.*$/
   script:
     # If no .npmrc is included in the repo, generate a temporary one that is configured to install from GitLab's NPM registry
-    - |
-      if [[ ! -f .npmrc ]]; then
-        echo 'No .npmrc found! Creating one now. Please review the following link for more information: https://docs.gitlab.com/ee/user/packages/npm_registry/index.html#project-level-npm-endpoint-1'
-        {
-          echo "@${CI_PROJECT_ROOT_NAMESPACE}:registry=${CI_API_V4_URL}/packages/npm/"
-          echo "${CI_API_V4_URL#http*:}/packages/npm/:_authToken=\${CI_JOB_TOKEN}"
-        } >> .npmrc
-      fi
-    - echo "Created the following .npmrc:"; cat .npmrc
+    # - |
+    #   if [[ ! -f .npmrc ]]; then
+    #     echo 'No .npmrc found! Creating one now. Please review the following link for more information: https://docs.gitlab.com/ee/user/packages/npm_registry/index.html#project-level-npm-endpoint-1'
+    #     {
+    #       echo "@${CI_PROJECT_ROOT_NAMESPACE}:registry=${CI_API_V4_URL}/packages/npm/"
+    #       echo "${CI_API_V4_URL#http*:}/packages/npm/:_authToken=\${CI_JOB_TOKEN}"
+    #     } >> .npmrc
+    #   fi
+    # - echo "Created the following .npmrc:"; cat .npmrc
     # Build, using the cache if available
     - npm install
-    - npm install @meetrix/lib-monitoring@$LIBMONITORING_VERSION
+    # - npm install @meetrix/lib-monitoring@$LIBMONITORING_VERSION
     - CI=false npm run build
     - mkdir package && mv dist connection_optimization modules types package.json -t package
     - tar -zcvf lib-jitsi-meet.tar.gz package
