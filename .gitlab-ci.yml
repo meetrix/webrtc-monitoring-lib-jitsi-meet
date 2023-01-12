@@ -23,7 +23,7 @@ branch_build:
     #   fi
     # - echo "Created the following .npmrc:"; cat .npmrc
     # Build, using the cache if available
-    - npm install
+    - NODE_ENV=development npm install
     # - npm install @meetrix/lib-monitoring@$LIBMONITORING_VERSION
     - CI=false npm run build
     - mkdir package && mv dist connection_optimization modules types package.json -t package
@@ -61,7 +61,7 @@ production_build:
     #   fi
     # - echo "Created the following .npmrc:"; cat .npmrc
     # Build, using the cache if available
-    - npm install
+    - NODE_ENV=development npm install
     # - npm install @meetrix/lib-monitoring@$LIBMONITORING_VERSION
     - CI=false npm run build
     - mkdir package && mv dist connection_optimization modules types package.json -t package
